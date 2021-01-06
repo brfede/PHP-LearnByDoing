@@ -11,10 +11,25 @@
  * Hint : Use the php function sleep(1) so the count is accurate.
  *
  */
-
-
-
-
+// Solución 1
+for($i = 1; $i <= 10; $i++) {
+    echo $i."\n";
+    sleep(1);
+}
+// Solución 2
+$i = 1;
+while($i<=10) {
+    echo $i."\n";
+    sleep(1);
+    $i++;
+}
+// Solución 3
+$i=1;
+do {
+    echo $i."\n";
+    sleep(1);
+    $i++;
+} while($i<=10);
 /**
  *  Multidimensional arrays.
  *  A flight agency is tracking how many seats are available in the plains.
@@ -53,3 +68,32 @@ $flights = [
         [2518, "CDG", "GRU", 2]
     ]
 ];
+
+$flightsWithNoSeats = 0;
+$nationalFlights = 0;
+$internationalFlights = 0;
+$maxAmountOfSeats = 0;
+$flightNumberWithMaxSeats = 0;
+
+foreach($flights as $typeOfFlights => $flightsOfType) {
+    foreach($flightsOfType as $flight) {
+        if($typeOfFlights == "National") {
+            $nationalFlights++;
+        } else if($typeOfFlights == "International") {
+            $internationalFlights++;
+        }
+        echo "Flight number: $flight[0], origin: $flight[1], destination: $flight[2], available seats: $flight[3]\n\n";
+        if($flight[3] == 0) {
+            $flightsWithNoSeats++;
+        }
+        if($flight[3] > $maxAmountOfSeats) {
+            $maxAmountOfSeats = $flight[3];
+            $flightNumberWithMaxSeats = $flight[0];
+        }
+    }
+}
+
+echo "$flightsWithNoSeats flights with no seats available\n";
+echo "$nationalFlights national flights\n";
+echo "$internationalFlights international flights\n";
+echo "The flight number with more seats available is $flightNumberWithMaxSeats\n";
