@@ -12,7 +12,11 @@
 
 $input = ["John","Mike","Adam","Richard","Martin","Sven"];
 
-
+$i = 0;
+while($i < count($input) && $input[$i] != "Martin") {
+    $i++;
+}
+echo "I found $input[$i], he is in the number $i of the list\n\n";
 
 /**
  * E3 B)
@@ -26,7 +30,7 @@ $input = ["John","Mike","Adam","Richard","Martin","Sven"];
  *
  * The products that do not belong the categories listed will have no discount.
  *
- * For each product processed, generate a output with the following format:
+ * For each product processed, generate an output with the following format:
  *
  *  White shirt of category: Shirts , will have a discount of : 10 percent.
  *
@@ -48,3 +52,19 @@ $products = [
     "Brown shirt" => "Shirts", "Baseball hat" => "Hats",
     "Skate shoes" => "Shoes", "Trecking shoes"
 ];
+
+foreach($products as $product=>$category) {
+    switch($category) {
+        case "Shoes":
+            echo "$product of category: $category, will have a discount of: 10 percent.\n\n";
+            break;
+        case "Shirts":
+            echo "$product of category: $category, will have a discount of: 15 percent.\n\n";
+            break;
+        case "Hats":
+            echo "$product of category: $category, will have a discount of: 5 percent.\n\n";
+            break;
+        default:
+            echo "$product of category: $category, will have no discount.\n\n";
+    }
+}
