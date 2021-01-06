@@ -11,3 +11,8 @@
  *
  *  Commit your result in your fork
  */
+$friends_ages = ["Mariano"=>32, "Matu"=>35, "Giselle"=>29];
+
+foreach ($friends_ages as $friend=>$age) {
+    echo "$friend is $age years old\n";
+}

@@ -12,4 +12,7 @@
  *  Commit your results in your fork.
  */
 
-$name ='';
+$name ='Federico';
+
+echo 'Hello world! my name is '.$name."\n";
+echo "Hello world! my name is $name\n";
