@@ -15,6 +15,6 @@ echo $matu->sayHello() . "\n \n";
  *  As $mariano and $matu return the same when calling hello method.
  *  Are these the same object ?
  *
- *  Your answer:
+ *  Your answer: No, these are different objects from the same class
  *
  */

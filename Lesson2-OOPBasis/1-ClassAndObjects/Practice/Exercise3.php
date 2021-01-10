@@ -11,12 +11,17 @@ Class Greeter {
     public function sayHello() {
         return  'hello, my name is ' . $this->name;
     }
+
+    public function sayGoodbye() {
+        return "Goodbye";
+    }
 }
 
 $mariano = new Greeter('Mariano');
 $matu = new Greeter('Matu');
 echo $mariano->sayHello() . "\n \n";
-echo $matu->sayHello(). "\n \n";
+echo $matu->sayHello() . "\n \n";
+echo $mariano->sayGoodbye() . "\n \n";
 
 /*
  *  What's the output in the command line for this code?
