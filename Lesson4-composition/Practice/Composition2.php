@@ -34,11 +34,22 @@ abstract class Vehicle {
     protected ConsoleCommand $consoleCommand;
     protected bool $isRiding;
     protected LoggerInterface $logger;
+    protected array $doorsPossibleLocations = ['lf', 'rf', 'rb', 'lb'];
 
 
     public abstract function start();
     public abstract function ride();
     public abstract function endRide();
+    public abstract function stop();
+    public abstract function startRadio();
+    public abstract function openAllDoors();
+    public abstract function closeAllDoors();
+    public abstract function accelerate();
+    public abstract function brake();
+    public abstract function lockCar();
+    public abstract function unlockCar();
+    protected abstract function setSpeed(int $speed);
+    public abstract function getSpeed();
 
 }
 
@@ -50,7 +61,9 @@ class Car extends Vehicle {
             $this->wheels[] = new Wheel();
         }
         for($i = 0; $i < $amountOfDoors; $i++) {
-            $this->doors[] = new Door();
+            $door = new Door();
+            $door->setDoorLocation($this->doorsPossibleLocations[$i]);
+            $this->doors[] = $door;
         }
         $this->consoleCommand = new ConsoleCommand();
         $this->isRiding = false;
@@ -101,15 +114,23 @@ class Car extends Vehicle {
 
     }
 
-    public function openDoors() {
+    public function openAllDoors() {
         foreach ($this->doors as $door) {
             $door->open();
         }
     }
 
-    public function closeDoors() {
+    public function closeAllDoors() {
         foreach ($this->doors as $door) {
             $door->close();
+        }
+    }
+
+    public function openDoor($location, ...$otherLocations) {
+        $amountOfLocationsProvided = 1 + count($otherLocations);
+        if($amountOfLocationsProvided > count($this->doors)) {
+
+            return;
         }
     }
 
@@ -145,11 +166,11 @@ class Car extends Vehicle {
         }
     }
 
-    private function setSpeed(int $speed) {
+    protected function setSpeed(int $speed) {
         $this->speed = $speed;
     }
 
-    private function getSpeed() : int {
+    public function getSpeed() : int {
         return $this->speed;
     }
 }
@@ -169,29 +190,58 @@ abstract class Engine {
         $this->isOn = false;
     }
 
+    public abstract function start();
+
+    public abstract function stop();
+
+    public function getIsOn() : bool {
+        return $this->isOn;
+    }
+}
+
+class DieselEngine extends Engine {
+
     public function start() {
         $this->isOn = true;
-        $this->logger->logAction("Car is at minimum speed");
-        echo "Engine Started\n";
+        $this->logger->logAction("Engine Started");
     }
 
     public function stop() {
         if($this->isOn) {
             $this->isOn = false;
         }
-        echo "Engine Stopped\n";
+        $this->logger->logAction("Engine Stopped");
+    }
+}
+
+class ElectronicEngine extends Engine {
+
+    public function start() {
+        $this->isOn = true;
+        $this->logger->logAction("Engine Started");
+    }
+
+    public function stop() {
+        if($this->isOn) {
+            $this->isOn = false;
+        }
+        $this->logger->logAction("Engine Stopped");
     }
 
     public function getIsOn() : bool {
         return $this->isOn;
     }
-
 }
 
 class Door {
     private bool $isOpen = false;
     private bool $isLocked = true;
+    private string $doorLocation;
+    private CliLogger $logger;
 
+    function __construct() {
+        $this->logger = new CliLogger();
+    }
 
     public function open() {
         if(!$this->isOpen) {
@@ -225,14 +275,23 @@ class Door {
         }
     }
 
+    public function setDoorLocation(string $location){
+        $this->doorLocation = $location;
+    }
+
     public function unlockDoor() {
-        if($this->is)
+        if($this->isOpen) {
+            $this->logger
+        } else {
+
             if($this->isLocked) {
                 $this->isLocked = false;
                 echo "Door is unlocked\n";
             } else {
                 echo "Door is already unlocked\n";
             }
+        }
+
     }
 }
 
@@ -249,16 +308,6 @@ class Wheel {
 }
 
 class ConsoleCommand {
-
-}
-
-
-
-class DieselEngine extends Engine {
-
-}
-
-class ElectronicEngine extends Engine {
 
 }
 
