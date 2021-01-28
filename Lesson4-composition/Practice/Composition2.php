@@ -18,8 +18,7 @@ interface LoggerInterface {
 
 class CliLogger implements LoggerInterface {
 
-    public function logAction(string $action)
-    {
+    public function logAction(string $action) {
         echo $action . "\n";
     }
 }
@@ -38,7 +37,18 @@ abstract class Vehicle {
 
 
     public abstract function start();
-    public abstract function ride();
+    public final function ride(){
+        if(!$this->engine->getIsOn()) {
+            $this->start();
+        }
+        foreach($this->wheels as $wheel) {
+            $wheel->startSpinning();
+        }
+        $this->logger->logAction("Car starts riding");
+        $this->setSpeed(0);
+        $this->isRiding = true;
+        $this->accelerate();
+    }
     public abstract function endRide();
     public abstract function stop();
     public abstract function startRadio();
@@ -56,6 +66,7 @@ abstract class Vehicle {
 class Car extends Vehicle {
 
     public function __construct(Engine $engine, int $amountOfWheels, int $amountOfDoors) {
+        $this->logger = new CliLogger();
         $this->engine = $engine;
         for($i = 0; $i < $amountOfWheels; $i++) {
             $this->wheels[] = new Wheel();
@@ -69,27 +80,13 @@ class Car extends Vehicle {
         $this->isRiding = false;
     }
 
-    public function ride() {
-        if($this->engine->getIsOn()) {
-            foreach($this->wheels as $wheel) {
-                $wheel->startSpinning();
-            }
-            $this->logger->logAction("Car starts riding");
-            $this->setSpeed(0);
-            $this->isRiding = true;
-            $this->accelerate();
-        } else {
-            $this->logger->logAction("You need to start the engine first");
-        }
-    }
-
     public function endRide() {
         if($this->isRiding) {
             foreach($this->wheels as $wheel) {
                 $wheel->stopSpinning();
             }
         } else {
-            echo "Car is not riding\n";
+            $this->logger->logAction("Car is not riding");
         }
     }
 
@@ -246,31 +243,31 @@ class Door {
     public function open() {
         if(!$this->isOpen) {
             $this->isOpen = true;
-            echo "Door is opened\n";
+            $this->logger->logAction("Door is opened");
         } else {
-            echo "Door is already opened\n";
+            $this->logger->logAction("Door is already opened");
         }
     }
 
     public function close() {
         if($this->isOpen){
             $this->isOpen = false;
-            echo "Door is closed\n";
+            $this->logger->logAction("Door is closed");
         } else {
-            echo "Door is already closed\n";
+            $this->logger->logAction("Door is already closed");
         }
     }
 
     public function lockDoor() {
         if($this->isOpen) {
-            echo "Need to close the doors to lock them";
+            $this->logger->logAction("Need to close the doors to lock them");
         } else {
             if(!$this->isLocked) {
 
                 $this->isLocked = true;
-                echo "Door is locked\n";
+                $this->logger->logAction("Door is locked");
             } else {
-                echo "Door is already locked\n";
+                $this->logger->logAction("Door is already locked");
             }
         }
     }
@@ -281,14 +278,14 @@ class Door {
 
     public function unlockDoor() {
         if($this->isOpen) {
-            $this->logger
+            $this->logger->logAction("Door is unlocked");
         } else {
 
             if($this->isLocked) {
                 $this->isLocked = false;
-                echo "Door is unlocked\n";
+                $this->logger->logAction("Door is unlocked");
             } else {
-                echo "Door is already unlocked\n";
+                $this->logger->logAction("Door is already unlocked");
             }
         }
 
@@ -297,6 +294,11 @@ class Door {
 
 class Wheel {
     private bool $isSpinning;
+    private CliLogger $logger;
+
+    function __construct() {
+        $this->logger = new CliLogger();
+    }
 
     public function startSpinning() {
         echo "Wheel starts spinning\n";
@@ -306,6 +308,9 @@ class Wheel {
         echo "Wheel stops spinning\n";
     }
 }
+
+// TODO: make a wheelCollection
+//TODO: make a doorCollection
 
 class ConsoleCommand {
 
@@ -321,4 +326,3 @@ $car->brake();
 $car->brake();
 $car->stop();
 $car->endRide();
-$car->openDoors();

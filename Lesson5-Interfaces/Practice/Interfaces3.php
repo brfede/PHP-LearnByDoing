@@ -8,9 +8,35 @@
  *  The classes involved in order to persist objects are the following.
  */
 
-class MyslqConnection {
+interface DataBaseConnection {
+    // Establishes the database connection
+    function connect() : void;
 
-    // Stablishes the database connection
+    // Executes insert, update delete
+    function executeQuery(string $query) : void;
+
+    // Used for selects and returns an array with the results.
+    function getQuery(string $query) : array;
+
+    function disconnect() : void;
+}
+
+class MyslqConnection implements DataBaseConnection {
+
+    // Establishes the database connection
+    function connect() : void {}
+
+    // Executes insert, update delete
+    function executeQuery(string $query) : void {}
+
+    // Used for selects and returns an array with the results.
+    function getQuery(string $query) : array {}
+
+    function disconnect() : void {}
+}
+
+class MongoDBConnection implements DataBaseConnection {
+    // Establishes the database connection
     function connect() : void {}
 
     // Executes insert, update delete
@@ -28,9 +54,9 @@ class PersonDao {
      * DAO means data access object, it's a common pattern used in order to handle the persistance layer.
      *  You can read more about daos in https://es.wikipedia.org/wiki/Objeto_de_acceso_a_datos
      */
-    private $connection;
+    private DataBaseConnection $connection;
 
-    public function __construct(MyslqConnection $connection)
+    public function __construct(DataBaseConnection $connection)
     {
         $this->connection = $connection;
     }
@@ -40,15 +66,14 @@ class PersonDao {
      * The code below wont work in a real scenario, it's just a sample to give a better picture about
      * what this method would be like.
      */
-    public function searchBy(array $criteria) : array
-    {
+    public function searchBy(array $criteria) : array {
         $this->connection->connect();
         $query = 'SELECT * FROM person where ';
         foreach ($criteria as $field => $value) {
             $query .= $field . ' = ' . $value;
         }
         $results = $this->connection->getQuery($query);
-        // Creates the objects from the array of resutls.
+        // Creates the objects from the array of results.
         $this->connection->disconnect();
         return $results;
     }
@@ -58,7 +83,7 @@ class PersonDao {
         $this->connection->connect();
         $query = "INSERT INTO PERSON (id, name) VALUES {$person->getId()} , {$person->getName()}";
         $results = $this->connection->executeQuery($query);
-        // Creates the objects from the array of resutls.
+        // Creates the objects from the array of results.
         $this->connection->disconnect();
         return $results;
     }
@@ -88,6 +113,6 @@ class Person {
  *
  *  Consider that the company expects to be able to make the same operations present in mysql in the new MongoDb connection
  *
- *  Please commit the canges needed and also the class diagram for the solution.
+ *  Please commit the changes needed and also the class diagram for the solution.
  */
 
