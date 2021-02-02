@@ -51,7 +51,7 @@ class MongoDBConnection implements DataBaseConnection {
 class PersonDao {
 
     /*
-     * DAO means data access object, it's a common pattern used in order to handle the persistance layer.
+     * DAO means data access object, it's a common pattern used in order to handle the persistence layer.
      *  You can read more about daos in https://es.wikipedia.org/wiki/Objeto_de_acceso_a_datos
      */
     private DataBaseConnection $connection;

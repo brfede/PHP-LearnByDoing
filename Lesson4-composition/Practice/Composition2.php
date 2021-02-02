@@ -17,6 +17,16 @@ interface LoggerInterface {
 }
 
 class CliLogger implements LoggerInterface {
+    private static CliLogger $loggerInstance;
+
+    private function __construct() {}
+
+    public static function getInstance() : CliLogger {
+        if(!isset($loggerInstance)) {
+            $loggerInstance = new CliLogger();
+        }
+        return $loggerInstance;
+    }
 
     public function logAction(string $action) {
         echo $action . "\n";
@@ -35,8 +45,23 @@ abstract class Vehicle {
     protected LoggerInterface $logger;
     protected array $doorsPossibleLocations = ['lf', 'rf', 'rb', 'lb'];
 
+    public function __construct(Engine $engine, int $amountOfWheels, int $amountOfDoors) {
+        $this->logger = CliLogger::getInstance();
+        $this->engine = $engine;
+        for($i = 0; $i < $amountOfWheels; $i++) {
+            $this->wheels[] = new Wheel();
+        }
+        for($i = 0; $i < $amountOfDoors; $i++) {
+            $door = new Door();
+            $door->setDoorLocation($this->doorsPossibleLocations[$i]);
+            $this->doors[] = $door;
+        }
+        $this->consoleCommand = new ConsoleCommand();
+        $this->isRiding = false;
+    }
 
     public abstract function start();
+    // Template Method:
     public final function ride(){
         if(!$this->engine->getIsOn()) {
             $this->start();
@@ -65,20 +90,7 @@ abstract class Vehicle {
 
 class Car extends Vehicle {
 
-    public function __construct(Engine $engine, int $amountOfWheels, int $amountOfDoors) {
-        $this->logger = new CliLogger();
-        $this->engine = $engine;
-        for($i = 0; $i < $amountOfWheels; $i++) {
-            $this->wheels[] = new Wheel();
-        }
-        for($i = 0; $i < $amountOfDoors; $i++) {
-            $door = new Door();
-            $door->setDoorLocation($this->doorsPossibleLocations[$i]);
-            $this->doors[] = $door;
-        }
-        $this->consoleCommand = new ConsoleCommand();
-        $this->isRiding = false;
-    }
+
 
     public function endRide() {
         if($this->isRiding) {
@@ -180,7 +192,7 @@ abstract class Engine {
     protected string $serialNumber;
 
     function __construct(int $hp, string $manufacturer, string $serialNumber) {
-        $this->logger = new CliLogger();
+        $this->logger = CliLogger::getInstance();
         $this->hp = $hp;
         $this->manufacturer = $manufacturer;
         $this->serialNumber = $serialNumber;
@@ -237,7 +249,7 @@ class Door {
     private CliLogger $logger;
 
     function __construct() {
-        $this->logger = new CliLogger();
+        $this->logger = CliLogger::getInstance();
     }
 
     public function open() {
@@ -297,25 +309,25 @@ class Wheel {
     private CliLogger $logger;
 
     function __construct() {
-        $this->logger = new CliLogger();
+        $this->logger = CliLogger::getInstance();
     }
 
     public function startSpinning() {
-        echo "Wheel starts spinning\n";
+        $this->logger->logAction("Wheel starts spinning");
     }
 
     public function stopSpinning() {
-        echo "Wheel stops spinning\n";
+        $this->logger->logAction("Wheel stops spinning");
     }
 }
 
 // TODO: make a wheelCollection
-//TODO: make a doorCollection
+// TODO: make a doorCollection
+
 
 class ConsoleCommand {
 
 }
-
 
 $car = new Car(new DieselEngine(180, 'General Motors', 'A0000'), 4,4 );
 $car->start();
